@@ -4,7 +4,7 @@ from peewee import PostgresqlDatabase, DateTimeField, Model, CharField, AutoFiel
 
 from Class.conect import Conect
 
-database = PostgresqlDatabase(None)
+database = PostgresqlDatabase(None, autorollback=True)
 
 
 class Client(Model):

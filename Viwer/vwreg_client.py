@@ -1,14 +1,16 @@
 import datetime
 
+import peewee
 import wx
 from wx import MessageBoxCaptionStr, OK, DefaultPosition
 from Class.client import Client
-from Service.svClient import new_table, search_cep, count_client
+from Service.svClient import new_table, search_cep, last_insert_id
 from DataBase.conection import Client as tbClient
 
 from Viwer import noname
 from Viwer.vwseach_client import SeachClient
 from Viwer.vwclimate import Climate
+
 global ClientCreationDate
 
 
@@ -28,6 +30,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_nome.SetFocus()
+            return
 
         elif self.ed_cpf.GetValue() == '':
             wx.MessageDialog(None,
@@ -36,6 +39,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_cpf.SetFocus()
+            return
 
         elif self.ed_rg.GetValue() == '':
             wx.MessageDialog(None,
@@ -44,6 +48,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_rg.SetFocus()
+            return
 
         elif self.ed_telefone.GetValue() == '':
             wx.MessageDialog(None,
@@ -52,6 +57,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_telefone.SetFocus()
+            return
 
         elif self.ed_cep.GetValue() == '':
             wx.MessageDialog(None,
@@ -60,6 +66,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_cep.SetFocus()
+            return
 
         elif self.ed_rua.GetValue() == '':
             wx.MessageDialog(None,
@@ -68,6 +75,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_rua.SetFocus()
+            return
 
         elif self.ed_numero.GetValue() == '':
             wx.MessageDialog(None,
@@ -76,6 +84,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_numero.SetFocus()
+            return
 
         elif self.ed_bairro.GetValue() == '':
             wx.MessageDialog(None,
@@ -84,6 +93,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_bairro.SetFocus()
+            return
 
         elif self.ed_cidade.GetValue() == '':
             wx.MessageDialog(None,
@@ -92,6 +102,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_cidade.SetFocus()
+            return
 
         elif self.ed_uf.GetValue() == '':
             wx.MessageDialog(None,
@@ -100,6 +111,7 @@ class RegClient(noname.reg_client):
                              style=OK,
                              pos=DefaultPosition).ShowModal()
             self.ed_uf.SetFocus()
+            return
 
         Client.id = self.ed_codigo.GetValue()
         Client.nome = self.ed_nome.GetValue()
@@ -113,7 +125,25 @@ class RegClient(noname.reg_client):
         Client.uf = self.ed_uf.GetValue()
         Client.cep = self.ed_cep.GetValue()
         Client.created_date = self.ed_criacao.GetValue()
-        new_table()
+        try:
+            new_table()
+            wx.MessageDialog(None, message='Registro salvo com sucesso!', style=wx.OK, caption='Sucesso!',
+                             pos=DefaultPosition).ShowModal()
+        except peewee.IntegrityError as ex:
+            wx.SafeShowMessage('Erro de inserção', f'Ocorreu um erro de integridade! {ex.orig}')
+        self.ed_codigo.SetValue(str(last_insert_id() + 1))
+        self.ed_nome.SetValue('')
+        self.ed_cpf.SetValue('')
+        self.ed_rg.SetValue('')
+        self.ed_telefone.SetValue('')
+        self.ed_cep.SetValue('')
+        self.ed_rua.SetValue('')
+        self.ed_numero.SetValue('')
+        self.ed_bairro.SetValue('')
+        self.ed_cidade.SetValue('')
+        self.ed_uf.SetValue('')
+        date = datetime.datetime.today()
+        self.ed_criacao.SetValue(date.strftime('%d/%m/%Y'))
         event.Skip()
 
     def OnKillFocusEd_cep(self, event):
@@ -128,7 +158,7 @@ class RegClient(noname.reg_client):
                 event.Skip()
 
     def OnActiveClient(self, event):
-        self.ed_codigo.SetValue(str(count_client() + 1))
+        self.ed_codigo.SetValue(str(last_insert_id() + 1))
         search = SeachClient.search
         self.ed_nome.SetFocus()
         if search > 0:
@@ -159,6 +189,7 @@ class RegClient(noname.reg_client):
         if not self.ed_criacao.GetValue():
             date = datetime.datetime.today()
             self.ed_criacao.SetValue(date.strftime('%d/%m/%Y'))
+        SeachClient.search = 0
         event.Skip()
 
     def OnBtPesquisaClick(self, event):
@@ -176,6 +207,3 @@ class RegClient(noname.reg_client):
         frame.Show()
         app.MainLoop()
         event.Skip()
-
-
-

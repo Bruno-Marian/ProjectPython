@@ -17,7 +17,7 @@ class SeachClient(noname.seach_client):
         self._search = value
 
     def OnbtPesquisaClick(self, event):
-        client = Client.select(Client.nome, Client.id, Client.cpf)
+        client = Client.select(Client.nome, Client.id, Client.cpf).order_by(Client.id.asc())
         for row in range(count_client()):
             if row > 14:
                 self.grid_client.AppendRows(1)

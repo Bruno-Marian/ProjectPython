@@ -1,5 +1,6 @@
 import datetime
 
+import peewee
 import requests as requests
 from DataBase.conection import Client as tbClient
 from Class.client import Client as clClient
@@ -23,8 +24,8 @@ def search_cep(cep) -> dict:
 
 def new_table():
     tbClient.create_table()
-
     if not tbClient.select().where(tbClient.id == clClient.id).exists():
+
         new_client = tbClient.create(id=clClient.id,
                                      nome=clClient.nome,
                                      cpf=clClient.cpf,
@@ -37,6 +38,8 @@ def new_table():
                                      uf=clClient.uf,
                                      cep=clClient.cep)
         new_client.save()
+
+
     else:
         update_client = tbClient.update({tbClient.nome: clClient.nome,
                                          tbClient.cpf: clClient.cpf,
@@ -54,6 +57,11 @@ def new_table():
 def count_client() -> int:
     client = tbClient.select(tbClient).count()
     return client
+
+
+def last_insert_id():
+    last = tbClient.select(tbClient.id).order_by(tbClient.id.desc())
+    return last[0].id
 
 
 def search_climate(cidade, uf):
