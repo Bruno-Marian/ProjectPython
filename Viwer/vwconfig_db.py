@@ -51,12 +51,14 @@ class Configdb(noname.config_db):
 
     def OnActiveConfgDB(self, event):
         self.ed_db_name.SetFocus()
-        if not Conect.db_name == '':
+        try:
             self.ed_db_name.SetValue(Conect.db_name)
             self.ed_host.SetValue(Conect.host)
             self.ed_port.SetValue(Conect.port)
             self.ed_user.SetValue(Conect.user)
             self.ed_password.SetValue(Conect.password)
+        except TypeError:
+            event.Skip()
         event.Skip()
 
 

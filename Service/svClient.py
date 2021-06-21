@@ -60,8 +60,11 @@ def count_client() -> int:
 
 
 def last_insert_id():
-    last = tbClient.select(tbClient.id).order_by(tbClient.id.desc())
-    return last[0].id
+    try:
+        last = tbClient.select(tbClient.id).order_by(tbClient.id.desc())
+        return last[0].id
+    except peewee.ProgrammingError:
+        return 0
 
 
 def search_climate(cidade, uf):
