@@ -19,7 +19,7 @@ class Client(Model):
     localidade = CharField()
     uf = CharField()
     cep = CharField()
-    created_date = DateTimeField(default=datetime.datetime.now())
+    created_date = DateTimeField(default=datetime.datetime.today())
 
     class Meta:
         database = database

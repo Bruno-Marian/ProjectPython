@@ -13,7 +13,7 @@ class RelClient(noname.rel_client):
                                Client.bairro, Client.numero, Client.localidade, Client.uf, Client.cep,
                                Client.created_date).order_by(Client.created_date.desc())
         for row in range(count_client()):
-            if row > 5:
+            if row > 4:
                 self.grid_rel.AppendRows(1)
             self.grid_rel.SetCellValue(row, 0, str(client[row].id))
             self.grid_rel.SetCellValue(row, 1, client[row].nome)

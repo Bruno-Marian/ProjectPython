@@ -1,3 +1,5 @@
+import datetime
+
 import wx
 from wx import MessageBoxCaptionStr, OK, DefaultPosition
 from Class.client import Client
@@ -7,6 +9,7 @@ from DataBase.conection import Client as tbClient
 from Viwer import noname
 from Viwer.vwseach_client import SeachClient
 from Viwer.vwclimate import Climate
+global ClientCreationDate
 
 
 class RegClient(noname.reg_client):
@@ -109,16 +112,20 @@ class RegClient(noname.reg_client):
         Client.localidade = self.ed_cidade.GetValue()
         Client.uf = self.ed_uf.GetValue()
         Client.cep = self.ed_cep.GetValue()
+        Client.created_date = self.ed_criacao.GetValue()
         new_table()
         event.Skip()
 
     def OnKillFocusEd_cep(self, event):
-        search = search_cep(self.ed_cep.GetValue())
-        self.ed_bairro.SetValue(search['bairro'])
-        self.ed_rua.SetValue(search['logradouro'])
-        self.ed_cidade.SetValue(search['localidade'])
-        self.ed_uf.SetValue(search['uf'])
-        event.Skip()
+        if len(self.ed_cep.GetValue()) == 8:
+            try:
+                search = search_cep(self.ed_cep.GetValue())
+                self.ed_bairro.SetValue(search['bairro'])
+                self.ed_rua.SetValue(search['logradouro'])
+                self.ed_cidade.SetValue(search['localidade'])
+                self.ed_uf.SetValue(search['uf'])
+            except KeyError:
+                event.Skip()
 
     def OnActiveClient(self, event):
         self.ed_codigo.SetValue(str(count_client() + 1))
@@ -135,7 +142,8 @@ class RegClient(noname.reg_client):
                                      tbClient.numero,
                                      tbClient.localidade,
                                      tbClient.uf,
-                                     tbClient.cep).where(tbClient.id == search)
+                                     tbClient.cep,
+                                     tbClient.created_date).where(tbClient.id == search)
             self.ed_codigo.SetValue(str(client[0].id))
             self.ed_nome.SetValue(client[0].nome)
             self.ed_cpf.SetValue(client[0].cpf)
@@ -147,6 +155,10 @@ class RegClient(noname.reg_client):
             self.ed_cidade.SetValue(client[0].localidade)
             self.ed_uf.SetValue(client[0].uf)
             self.ed_cep.SetValue(client[0].cep)
+            self.ed_criacao.SetValue(str(client[0].created_date.strftime('%d/%m/%Y')))
+        if not self.ed_criacao.GetValue():
+            date = datetime.datetime.today()
+            self.ed_criacao.SetValue(date.strftime('%d/%m/%Y'))
         event.Skip()
 
     def OnBtPesquisaClick(self, event):

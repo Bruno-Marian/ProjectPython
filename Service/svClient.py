@@ -6,15 +6,19 @@ from Class.client import Client as clClient
 
 
 def search_cep(cep) -> dict:
-    result = requests.get(f'https://viacep.com.br/ws/{cep}/json/')
-    if result.status_code == 200:
-        data = result.json()
-        localidade = (data['localidade'])
-        bairro = (data['bairro'])
-        uf = (data['uf'])
-        logradouro = (data['logradouro'])
+    try:
+        result = requests.get(f'https://viacep.com.br/ws/{cep}/json/')
+        if result.status_code == 200:
+            data = result.json()
+            localidade = (data['localidade'])
+            bairro = (data['bairro'])
+            uf = (data['uf'])
+            logradouro = (data['logradouro'])
 
-        return {'logradouro': logradouro, 'bairro': bairro, 'uf': uf, 'localidade': localidade}
+            return {'logradouro': logradouro, 'bairro': bairro, 'uf': uf, 'localidade': localidade}
+    except requests.exceptions.ConnectionError as ex:
+        create_log(name_log='error', log=f' {ex !r}')
+    return {}
 
 
 def new_table():
@@ -44,7 +48,7 @@ def new_table():
                                          tbClient.uf: clClient.uf,
                                          tbClient.cep: clClient.cep}).where(tbClient.id == clClient.id)
         update_client.execute()
-        create_log(str(update_client))
+        create_log(name_log='update', log=str(update_client))
 
 
 def count_client() -> int:
@@ -73,14 +77,14 @@ def search_climate(cidade, uf):
                 'temp': temp}
 
 
-def create_log(log_update):
+def create_log(name_log, log):
     try:
-        archive = open('./log/update.txt', 'r+')
+        archive = open(f'./log/{name_log}.txt', 'r+')
         text = archive.readlines()
-        text.append(f'AVISO DE UPDATE {datetime.datetime.now()}: {log_update}\n')
+        text.append(f'LOG: {datetime.datetime.now()}: {log}\n')
         archive.writelines(text)
         archive.close()
     except FileNotFoundError:
-        archive = open('./log/update.txt', 'w+')
-        archive.writelines(f'AVISO DE UPDATE {datetime.datetime.now()}: {log_update}')
+        archive = open(f'./log/{name_log}.txt', 'w+')
+        archive.writelines(f'LOG: {datetime.datetime.now()}: {log}')
         archive.close()

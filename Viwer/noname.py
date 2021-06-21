@@ -280,6 +280,7 @@ class reg_client ( wx.Frame ):
 		gbSizer4.Add( self.m_staticText20, wx.GBPosition( 0, 2 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
 
 		self.ed_cep = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.Size( 140,-1 ), 0 )
+		self.ed_cep.SetMaxLength( 8 )
 		gbSizer4.Add( self.ed_cep, wx.GBPosition( 0, 3 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
 
 
@@ -339,6 +340,23 @@ class reg_client ( wx.Frame ):
 
 		bSizer6.Add( gbSizer6, 0, wx.EXPAND, 5 )
 
+		gbSizer16 = wx.GridBagSizer( 0, 0 )
+		gbSizer16.SetFlexibleDirection( wx.BOTH )
+		gbSizer16.SetNonFlexibleGrowMode( wx.FLEX_GROWMODE_SPECIFIED )
+
+		self.m_staticText191 = wx.StaticText( self.m_panel5, wx.ID_ANY, u"Cliente desde:", wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.m_staticText191.Wrap( -1 )
+
+		gbSizer16.Add( self.m_staticText191, wx.GBPosition( 0, 0 ), wx.GBSpan( 1, 1 ), wx.ALL|wx.ALIGN_CENTER_VERTICAL, 5 )
+
+		self.ed_criacao = wx.TextCtrl( self.m_panel5, wx.ID_ANY, wx.EmptyString, wx.DefaultPosition, wx.DefaultSize, 0 )
+		self.ed_criacao.Enable( False )
+
+		gbSizer16.Add( self.ed_criacao, wx.GBPosition( 0, 1 ), wx.GBSpan( 1, 1 ), wx.ALL, 5 )
+
+
+		bSizer6.Add( gbSizer16, 1, wx.EXPAND, 5 )
+
 		self.m_panel10 = wx.Panel( self.m_panel5, wx.ID_ANY, wx.DefaultPosition, wx.DefaultSize, wx.TAB_TRAVERSAL )
 		bSizer6.Add( self.m_panel10, 1, wx.EXPAND |wx.ALL, 5 )
 
@@ -385,6 +403,7 @@ class reg_client ( wx.Frame ):
 		# Connect Events
 		self.Bind( wx.EVT_ACTIVATE, self.OnActiveClient )
 		self.Bind( wx.EVT_SET_FOCUS, self.onsetFocus )
+		self.ed_cep.Bind( wx.EVT_CHAR, self.OnCharKey )
 		self.ed_cep.Bind( wx.EVT_KILL_FOCUS, self.OnKillFocusEd_cep )
 		self.bt_cancel.Bind( wx.EVT_BUTTON, self.OnBtClickbt_cancelar )
 		self.bt_salve.Bind( wx.EVT_BUTTON, self.OnBtClickbt_salvar )
@@ -400,6 +419,9 @@ class reg_client ( wx.Frame ):
 		event.Skip()
 
 	def onsetFocus( self, event ):
+		event.Skip()
+
+	def OnCharKey( self, event ):
 		event.Skip()
 
 	def OnKillFocusEd_cep( self, event ):
