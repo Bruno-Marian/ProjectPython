@@ -11,7 +11,7 @@ class RelClient(noname.rel_client):
         self.Maximize()
         client = Client.select(Client.nome, Client.id, Client.cpf, Client.telefone, Client.rg, Client.logradouro,
                                Client.bairro, Client.numero, Client.localidade, Client.uf, Client.cep,
-                               Client.created_date)
+                               Client.created_date).order_by(Client.created_date.desc())
         for row in range(count_client()):
             if row > 5:
                 self.grid_rel.AppendRows(1)
